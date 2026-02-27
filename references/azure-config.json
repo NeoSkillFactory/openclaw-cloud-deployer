@@ -1,0 +1,48 @@
+{
+  "platform": "azure",
+  "subscriptionId": "",
+  "resourceGroup": "openclaw-rg",
+  "location": "eastus",
+  "compute": {
+    "vmSize": "Standard_B2s",
+    "imagePublisher": "Canonical",
+    "imageOffer": "0001-com-ubuntu-server-jammy",
+    "imageSku": "22_04-lts",
+    "osDiskSizeGb": 30
+  },
+  "network": {
+    "vnetName": "openclaw-vnet",
+    "subnetName": "openclaw-subnet",
+    "addressPrefix": "10.0.0.0/16",
+    "subnetPrefix": "10.0.1.0/24",
+    "nsgName": "openclaw-nsg",
+    "nsgRules": [
+      { "name": "AllowHTTPS", "priority": 100, "protocol": "Tcp", "port": 443, "access": "Allow" },
+      { "name": "AllowHTTP", "priority": 110, "protocol": "Tcp", "port": 80, "access": "Allow" },
+      { "name": "AllowAgent", "priority": 120, "protocol": "Tcp", "port": 8080, "access": "Allow" },
+      { "name": "AllowSSH", "priority": 130, "protocol": "Tcp", "port": 22, "access": "Allow" }
+    ]
+  },
+  "container": {
+    "image": "openclaw/agent:latest",
+    "port": 8080,
+    "healthCheckPath": "/health",
+    "memoryGb": 0.5,
+    "cpuCores": 1
+  },
+  "ssl": {
+    "enabled": true,
+    "provider": "app-service-managed",
+    "autoRenew": true
+  },
+  "scaling": {
+    "enabled": false,
+    "minInstances": 1,
+    "maxInstances": 3,
+    "targetCpuPercent": 70
+  },
+  "tags": {
+    "ManagedBy": "openclaw-cloud-deployer",
+    "Environment": "production"
+  }
+}

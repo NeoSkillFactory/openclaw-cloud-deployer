@@ -1,0 +1,33 @@
+{
+  "name": "openclaw-cloud-deployer",
+  "version": "1.0.0",
+  "description": "Automatically deploys and configures OpenClaw agents to cloud platforms without manual Docker setup or server management.",
+  "main": "scripts/deploy-aws.js",
+  "scripts": {
+    "deploy:aws": "node scripts/deploy-aws.js",
+    "deploy:gcp": "node scripts/deploy-gcp.js",
+    "deploy:azure": "node scripts/deploy-azure.js",
+    "deploy:digitalocean": "node scripts/deploy-digitalocean.js",
+    "health-check": "node scripts/health-check.js",
+    "rollback": "node scripts/rollback.js",
+    "test": "node --test scripts/*.test.js"
+  },
+  "keywords": [
+    "openclaw",
+    "cloud",
+    "deployment",
+    "aws",
+    "gcp",
+    "azure",
+    "digitalocean",
+    "docker",
+    "automation"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "yaml": "^2.3.4"
+  }
+}

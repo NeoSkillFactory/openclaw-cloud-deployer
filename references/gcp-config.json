@@ -1,0 +1,43 @@
+{
+  "platform": "gcp",
+  "projectId": "",
+  "region": "us-central1",
+  "zone": "us-central1-a",
+  "compute": {
+    "machineType": "e2-medium",
+    "imageFamily": "cos-stable",
+    "imageProject": "cos-cloud",
+    "diskSizeGb": 30,
+    "diskType": "pd-standard"
+  },
+  "network": {
+    "name": "default",
+    "firewallRules": [
+      { "name": "openclaw-allow-https", "protocol": "tcp", "port": 443, "sourceRanges": ["0.0.0.0/0"] },
+      { "name": "openclaw-allow-http", "protocol": "tcp", "port": 80, "sourceRanges": ["0.0.0.0/0"] },
+      { "name": "openclaw-allow-agent", "protocol": "tcp", "port": 8080, "sourceRanges": ["0.0.0.0/0"] },
+      { "name": "openclaw-allow-ssh", "protocol": "tcp", "port": 22, "sourceRanges": ["0.0.0.0/0"] }
+    ]
+  },
+  "container": {
+    "image": "openclaw/agent:latest",
+    "port": 8080,
+    "healthCheckPath": "/health",
+    "memoryLimitMb": 512
+  },
+  "ssl": {
+    "enabled": true,
+    "provider": "managed",
+    "autoRenew": true
+  },
+  "scaling": {
+    "enabled": false,
+    "minInstances": 1,
+    "maxInstances": 3,
+    "targetCpuPercent": 70
+  },
+  "labels": {
+    "managed-by": "openclaw-cloud-deployer",
+    "environment": "production"
+  }
+}

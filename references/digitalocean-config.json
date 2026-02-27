@@ -1,0 +1,38 @@
+{
+  "platform": "digitalocean",
+  "region": "nyc1",
+  "droplet": {
+    "size": "s-2vcpu-2gb",
+    "image": "docker-20-04",
+    "backups": false,
+    "monitoring": true,
+    "ipv6": true,
+    "tags": ["openclaw", "agent", "production"]
+  },
+  "network": {
+    "firewallName": "openclaw-fw",
+    "inboundRules": [
+      { "protocol": "tcp", "ports": "443", "sources": "0.0.0.0/0,::/0" },
+      { "protocol": "tcp", "ports": "80", "sources": "0.0.0.0/0,::/0" },
+      { "protocol": "tcp", "ports": "8080", "sources": "0.0.0.0/0,::/0" },
+      { "protocol": "tcp", "ports": "22", "sources": "0.0.0.0/0,::/0" }
+    ]
+  },
+  "container": {
+    "image": "openclaw/agent:latest",
+    "port": 8080,
+    "healthCheckPath": "/health",
+    "memoryLimitMb": 512
+  },
+  "ssl": {
+    "enabled": true,
+    "provider": "letsencrypt",
+    "autoRenew": true
+  },
+  "scaling": {
+    "enabled": false,
+    "minDroplets": 1,
+    "maxDroplets": 3,
+    "targetCpuPercent": 70
+  }
+}

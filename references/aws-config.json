@@ -1,0 +1,45 @@
+{
+  "platform": "aws",
+  "region": "us-east-1",
+  "instance": {
+    "type": "t3.medium",
+    "ami": "ami-0c02fb55956c7d316",
+    "keyName": "openclaw-deployer",
+    "securityGroup": {
+      "name": "openclaw-agent-sg",
+      "ingressRules": [
+        { "protocol": "tcp", "port": 443, "cidr": "0.0.0.0/0", "description": "HTTPS" },
+        { "protocol": "tcp", "port": 80, "cidr": "0.0.0.0/0", "description": "HTTP (redirect)" },
+        { "protocol": "tcp", "port": 22, "cidr": "0.0.0.0/0", "description": "SSH" },
+        { "protocol": "tcp", "port": 8080, "cidr": "0.0.0.0/0", "description": "Agent API" }
+      ]
+    }
+  },
+  "vpc": {
+    "useDefault": true,
+    "cidrBlock": "10.0.0.0/16",
+    "subnetCidr": "10.0.1.0/24"
+  },
+  "container": {
+    "image": "openclaw/agent:latest",
+    "port": 8080,
+    "healthCheckPath": "/health",
+    "memoryReservation": 512,
+    "cpu": 256
+  },
+  "ssl": {
+    "enabled": true,
+    "provider": "acm",
+    "autoRenew": true
+  },
+  "scaling": {
+    "enabled": false,
+    "minInstances": 1,
+    "maxInstances": 3,
+    "targetCpuPercent": 70
+  },
+  "tags": {
+    "ManagedBy": "openclaw-cloud-deployer",
+    "Environment": "production"
+  }
+}

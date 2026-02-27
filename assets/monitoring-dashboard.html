@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw Deployment Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #eab308;
+      --blue: #3b82f6;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); padding: 2rem; }
+    h1 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; }
+    .card h2 { font-size: 0.875rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; }
+    .metric { font-size: 2rem; font-weight: 700; }
+    .status-ok { color: var(--green); }
+    .status-warn { color: var(--yellow); }
+    .status-err { color: var(--red); }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+    .badge-ok { background: #16a34a22; color: var(--green); }
+    .badge-err { background: #dc262622; color: var(--red); }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { text-align: left; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
+    th { color: var(--muted); font-weight: 500; }
+    #log { background: #020617; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; font-family: monospace; font-size: 0.8rem; max-height: 300px; overflow-y: auto; margin-top: 1.5rem; white-space: pre-wrap; color: var(--muted); }
+    .refresh-btn { background: var(--blue); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.875rem; margin-bottom: 1rem; }
+    .refresh-btn:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <h1>OpenClaw Cloud Deployer &mdash; Deployment Dashboard</h1>
+  <button class="refresh-btn" onclick="loadData()">Refresh</button>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Deployment Status</h2>
+      <div id="deploy-status" class="metric status-ok">Healthy</div>
+    </div>
+    <div class="card">
+      <h2>Platform</h2>
+      <div id="platform" class="metric">-</div>
+    </div>
+    <div class="card">
+      <h2>Uptime</h2>
+      <div id="uptime" class="metric">-</div>
+    </div>
+    <div class="card">
+      <h2>Last Health Check</h2>
+      <div id="last-check" class="metric" style="font-size:1.1rem">-</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:1.5rem">
+    <h2>Health Checks</h2>
+    <table>
+      <thead><tr><th>Check</th><th>Status</th><th>Latency</th><th>Last Run</th></tr></thead>
+      <tbody id="checks-body"><tr><td colspan="4" style="color:var(--muted)">No data loaded</td></tr></tbody>
+    </table>
+  </div>
+
+  <div id="log">Waiting for deployment data...\nLoad a deployment JSON file or connect to a live agent to populate this dashboard.</div>
+
+  <script>
+    function loadData() {
+      const deployDir = '.deployments';
+      document.getElementById('log').textContent += '\n[' + new Date().toISOString() + '] Refresh requested. In production, this fetches live data from the deployment state API.';
+    }
+
+    function renderChecks(checks) {
+      const tbody = document.getElementById('checks-body');
+      tbody.innerHTML = '';
+      for (const c of checks) {
+        const tr = document.createElement('tr');
+        const statusCls = c.passed ? 'badge-ok' : 'badge-err';
+        const statusTxt = c.passed ? 'PASS' : 'FAIL';
+        tr.innerHTML = '<td>' + c.name + '</td><td><span class="badge ' + statusCls + '">' + statusTxt + '</span></td><td>' + (c.latencyMs || '-') + ' ms</td><td>' + (c.lastRun || '-') + '</td>';
+        tbody.appendChild(tr);
+      }
+    }
+
+    // On load, show placeholder
+    document.addEventListener('DOMContentLoaded', () => {
+      renderChecks([
+        { name: 'http_endpoint', passed: true, latencyMs: 42, lastRun: new Date().toISOString() },
+        { name: 'container_running', passed: true, latencyMs: 5, lastRun: new Date().toISOString() },
+        { name: 'port_open', passed: true, latencyMs: 12, lastRun: new Date().toISOString() },
+        { name: 'disk_space', passed: true, latencyMs: 8, lastRun: new Date().toISOString() },
+        { name: 'memory_usage', passed: true, latencyMs: 7, lastRun: new Date().toISOString() },
+      ]);
+    });
+  </script>
+</body>
+</html>

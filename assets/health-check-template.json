@@ -1,0 +1,60 @@
+{
+  "version": "1.0",
+  "checks": [
+    {
+      "name": "http_endpoint",
+      "type": "http",
+      "url": "http://{{host}}:{{port}}{{healthCheckPath}}",
+      "method": "GET",
+      "expectedStatus": 200,
+      "timeoutMs": 5000,
+      "intervalMs": 10000,
+      "retries": 3
+    },
+    {
+      "name": "container_running",
+      "type": "command",
+      "command": "docker ps --filter name=openclaw-agent --format '{{.Status}}'",
+      "expectedPattern": "Up",
+      "timeoutMs": 5000,
+      "intervalMs": 30000,
+      "retries": 2
+    },
+    {
+      "name": "port_open",
+      "type": "tcp",
+      "host": "{{host}}",
+      "port": "{{port}}",
+      "timeoutMs": 3000,
+      "intervalMs": 15000,
+      "retries": 3
+    },
+    {
+      "name": "disk_space",
+      "type": "command",
+      "command": "df -h / | awk 'NR==2 {print $5}' | tr -d '%'",
+      "expectedPattern": "^[0-8][0-9]?$",
+      "timeoutMs": 3000,
+      "intervalMs": 60000,
+      "retries": 1
+    },
+    {
+      "name": "memory_usage",
+      "type": "command",
+      "command": "free -m | awk 'NR==2 {printf \"%d\", $3/$2*100}'",
+      "expectedPattern": "^[0-8][0-9]?$",
+      "timeoutMs": 3000,
+      "intervalMs": 60000,
+      "retries": 1
+    }
+  ],
+  "alerting": {
+    "enabled": false,
+    "channels": [],
+    "onFailureThreshold": 3
+  },
+  "reporting": {
+    "format": "json",
+    "outputDir": ".deployments/reports"
+  }
+}
