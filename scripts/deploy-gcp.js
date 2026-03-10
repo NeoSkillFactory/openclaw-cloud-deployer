@@ -82,7 +82,7 @@ function launchInstance(config, dryRun) {
   log.info(`Launching GCE instance (${compute.machineType}) in ${zone}...`);
 
   if (dryRun) {
-    log.info(`[dry-run] Would create instance in project ${projectId}, zone ${zone}`);
+    log.info(`[dry-run] Would create instance in project ${projectId || "(default)"}, zone ${zone}`);
     return { instanceName: "openclaw-agent-dry-run", publicIp: "0.0.0.0" };
   }
 
@@ -182,7 +182,7 @@ async function deploy(overrides = {}) {
     projectId: args["project-id"] || overrides.projectId || baseConfig.projectId,
   });
 
-  log.info(`Project: ${config.projectId || "(from env)"}`);
+  log.info(`Project: ${config.projectId || process.env.GCP_PROJECT_ID || "(not set — will use gcloud default)"}`);
   log.info(`Zone: ${config.zone}`);
   log.info(`Machine type: ${config.compute.machineType}`);
 
