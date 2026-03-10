@@ -29,8 +29,6 @@ Override any config value via CLI flags (e.g., `--region`, `--instance-type`).
 
 Source code: [github.com/NeoSkillFactory/openclaw-cloud-deployer](https://github.com/NeoSkillFactory/openclaw-cloud-deployer)
 
-**Price suggestion:** $79 USD
-
 ## License
 
 MIT © NeoSkillFactory
